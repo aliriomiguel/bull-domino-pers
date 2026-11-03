@@ -853,6 +853,27 @@ export default function App() {
     setIsMatchmakingSearching(false);
   };
 
+  // Exit the current match and release this player's server-side room session.
+  const handleExitToTitle = () => {
+    const ws = wsRef.current;
+    if (isMultiplayer && ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'LEAVE_ROOM', payload: {} }));
+    }
+
+    setScreen('title');
+    setWaitingRoomId(null);
+    setActiveRoomId(null);
+    setRoomHostId(null);
+    setIsMultiplayer(false);
+    setIsPrivateRoomModalOpen(false);
+    setIsMatchmakingModalOpen(false);
+    setIsMatchmakingSearching(false);
+    setIsChatOpen(false);
+    setRoomKey(null);
+    setChatMessages([]);
+    setUnreadChatCount(0);
+  };
+
   // Create Private Room
   const handleCreatePrivateRoom = (options: {
     mode: GameMode;
@@ -975,10 +996,7 @@ export default function App() {
               startSoloGame('draw', 100, 'tactician', undefined, matchType);
             }
           }}
-          onExitToTitle={() => {
-            setScreen('title');
-            setActiveRoomId(null);
-          }}
+          onExitToTitle={handleExitToTitle}
           onToggleChat={() => {
             setIsChatOpen((prev) => !prev);
             setUnreadChatCount(0);
