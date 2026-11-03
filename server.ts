@@ -11,8 +11,8 @@ import {
   calculateAllFivesScore,
   evaluateRoundEnd,
   chooseAIMove,
-} from './src/game/dominoCore';
-import { GameMode, DominoTile, PlacedTile, PlayerProfile, MatchType } from './src/types/domino';
+} from './src/game/dominoCore.js';
+import { GameMode, DominoTile, PlacedTile, PlayerProfile, MatchType } from './src/types/domino.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
