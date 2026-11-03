@@ -550,6 +550,22 @@ wss.on('connection', (ws: WebSocket) => {
           break;
         }
 
+        case 'SYNC_ROOM': {
+          // A client may miss the broadcast that transitions a room to playing.
+          // Return the latest state to the requesting player without rebroadcasting
+          // to every other participant.
+          if (!boundRoomId || !boundPlayerId) break;
+          const room = rooms.get(boundRoomId);
+          const player = room?.players.find(p => p.id === boundPlayerId);
+          if (room && player && player.ws === ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              type: 'ROOM_UPDATE',
+              payload: getClientRoomState(room, boundPlayerId),
+            }));
+          }
+          break;
+        }
+
         case 'JOIN_ROOM': {
           const roomId = (payload.roomId || '').toUpperCase();
           const room = rooms.get(roomId);
