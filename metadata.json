@@ -1,0 +1,6 @@
+{
+  "name": "Bull Domino - Multiplayer Dominoes",
+  "description": "Bull Domino: Real-time multiplayer domino game with 1v1 and 2v2 modes, WebSockets, private rooms, campaign mode, E2EE chat, and seasonal leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
