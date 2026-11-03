@@ -11,7 +11,7 @@ import {
   PlayerState,
   PlacementDirection,
   CandidatePlacement,
-} from '../types/domino';
+} from '../types/domino.js';
 
 /**
  * Standard Double-Six Domino Set (28 tiles, 0-0 through 6-6)
