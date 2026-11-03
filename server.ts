@@ -794,13 +794,14 @@ wss.on('connection', (ws: WebSocket) => {
 
         case 'LEAVE_ROOM': {
           if (!boundRoomId || !boundPlayerId) return;
-          const room = rooms.get(boundRoomId);
+          const roomId = boundRoomId;
+          const room = rooms.get(roomId);
           if (room) {
             if (room.status === 'waiting') {
               room.players = room.players.filter(p => p.id !== boundPlayerId);
               if (room.players.length === 0 || !room.players.some(p => !p.isBot)) {
                 if (room.turnTimerInterval) clearInterval(room.turnTimerInterval);
-                rooms.delete(boundRoomId);
+                rooms.delete(roomId);
               } else {
                 if (room.hostId === boundPlayerId) {
                   const nextHost = room.players.find(p => !p.isBot);
@@ -809,12 +810,23 @@ wss.on('connection', (ws: WebSocket) => {
                 syncRoomToAll(room);
               }
             } else {
-              const player = room.players.find(p => p.id === boundPlayerId);
-              if (player) {
-                player.connected = false;
-                player.ws = null;
-                syncRoomToAll(room);
+              // Abandoning an active match closes the entire room. Notify every
+              // remaining participant before deleting it so nobody can keep
+              // playing or reconnect to an abandoned match.
+              if (room.turnTimerInterval) {
+                clearInterval(room.turnTimerInterval);
+                room.turnTimerInterval = null;
               }
+              const closedMessage = JSON.stringify({
+                type: 'ROOM_CLOSED',
+                payload: { roomId, reason: 'A player abandoned the match.' },
+              });
+              for (const player of room.players) {
+                if (player.id !== boundPlayerId && player.ws && player.ws.readyState === WebSocket.OPEN) {
+                  player.ws.send(closedMessage);
+                }
+              }
+              rooms.delete(roomId);
             }
           }
           boundRoomId = null;
