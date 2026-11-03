@@ -1188,15 +1188,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               >
                 <Play className="w-4 h-4 fill-stone-950" /> {t.resume}
               </button>
-              <button
-                onClick={() => {
-                  setIsPaused(false);
-                  onRestartMatch();
-                }}
-                className="w-full py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
-              >
-                <RotateCcw className="w-4 h-4" /> {t.restart}
-              </button>
+              {!isMultiplayer && (
+                <button
+                  onClick={() => {
+                    setIsPaused(false);
+                    onRestartMatch();
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition"
+                >
+                  <RotateCcw className="w-4 h-4" /> {t.restart}
+                </button>
+              )}
               <button
                 onClick={() => {
                   setIsPaused(false);
@@ -1324,13 +1326,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               {isGameOver ? (
                 <>
-                  <button
-                    data-start="true"
-                    onClick={onRestartMatch}
-                    className="py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition shadow"
-                  >
-                    <RotateCcw className="w-4 h-4" /> {t.rematch}
-                  </button>
+                  {!isMultiplayer && (
+                    <button
+                      data-start="true"
+                      onClick={onRestartMatch}
+                      className="py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition shadow"
+                    >
+                      <RotateCcw className="w-4 h-4" /> {t.rematch}
+                    </button>
+                  )}
                   <button
                     onClick={onOpenShareModal}
                     className="py-3 px-4 rounded-xl bg-stone-800 hover:bg-stone-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition"
