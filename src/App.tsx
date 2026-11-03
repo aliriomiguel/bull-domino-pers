@@ -290,6 +290,23 @@ export default function App() {
     return ws;
   }, [profile.id]);
 
+  // Recover missed room updates while the private-room lobby is waiting.
+  // The server responds only to this socket with its latest player-safe room snapshot.
+  useEffect(() => {
+    if (!waitingRoomId || screen === 'playing') return;
+
+    const requestRoomSync = () => {
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'SYNC_ROOM', payload: {} }));
+      }
+    };
+
+    requestRoomSync();
+    const syncInterval = window.setInterval(requestRoomSync, 2500);
+    return () => window.clearInterval(syncInterval);
+  }, [waitingRoomId, screen]);
+
   // Handle URL Room parameters & autostart
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
