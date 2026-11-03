@@ -186,8 +186,9 @@ export default function App() {
       return wsRef.current;
     }
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}`);
+    const wsUrl = new URL('/api/ws', window.location.href);
+    wsUrl.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(wsUrl.toString());
     wsRef.current = ws;
 
     ws.onmessage = async (event) => {

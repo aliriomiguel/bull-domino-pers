@@ -19,9 +19,18 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server, path: '/api/ws' });
 
 app.use(express.json());
+
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'bull-domino',
+    websocketPath: '/api/ws',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 interface ServerPlayer {
   id: string;
@@ -969,4 +978,10 @@ async function startServer() {
   });
 }
 
-startServer();
+// Vercel imports this HTTP server as a Function. Local development still
+// starts the standalone server (including the Vite middleware) through tsx.
+if (process.env.VERCEL !== '1') {
+  startServer();
+}
+
+export default server;
