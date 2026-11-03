@@ -278,6 +278,19 @@ export default function App() {
             setUnreadChatCount((count) => count + 1);
             break;
 
+          case 'ROOM_CLOSED':
+            setScreen('title');
+            setWaitingRoomId(null);
+            setActiveRoomId(null);
+            setRoomHostId(null);
+            setIsMultiplayer(false);
+            setIsChatOpen(false);
+            setRoomKey(null);
+            setChatMessages([]);
+            setUnreadChatCount(0);
+            alert('La partida ha terminado porque otro jugador ha abandonado la sala.');
+            break;
+
           case 'ERROR':
             alert(payload.message || 'Error occurred');
             break;
